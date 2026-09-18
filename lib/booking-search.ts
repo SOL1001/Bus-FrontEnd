@@ -15,7 +15,16 @@ export function buildSearchUrl(params: SearchParams) {
   return `/search?${search.toString()}`
 }
 
-export function buildBookUrl(params: SearchParams & { trip: string }) {
+export type BookStep = "seats" | "passenger" | "payment" | "confirm"
+
+export type BookQuery = SearchParams & {
+  trip: string
+  seat?: string
+  step?: BookStep
+  ref?: string
+}
+
+export function buildBookUrl(params: BookQuery) {
   const search = new URLSearchParams({
     trip: params.trip,
     from: params.from,
@@ -28,7 +37,41 @@ export function buildBookUrl(params: SearchParams & { trip: string }) {
     search.set("sort", params.sort)
   }
 
+  if (params.seat) {
+    search.set("seat", params.seat)
+  }
+
+  if (params.step && params.step !== "seats") {
+    search.set("step", params.step)
+  }
+
+  if (params.ref) {
+    search.set("ref", params.ref)
+  }
+
   return `/book?${search.toString()}`
+}
+
+export function parseBookQuery(
+  searchParams: Record<string, string | string[] | undefined>
+): BookQuery | null {
+  const base = parseSearchParams(searchParams)
+  const trip = getParam(searchParams.trip)
+  const seat = getParam(searchParams.seat)
+  const stepRaw = getParam(searchParams.step)
+  const ref = getParam(searchParams.ref)
+
+  if (!base || !trip) return null
+
+  const step: BookStep | undefined =
+    stepRaw === "passenger" ||
+    stepRaw === "payment" ||
+    stepRaw === "confirm" ||
+    stepRaw === "seats"
+      ? stepRaw
+      : undefined
+
+  return { ...base, trip, seat, step, ref }
 }
 
 export function parseSearchParams(
