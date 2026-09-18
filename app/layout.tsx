@@ -1,15 +1,29 @@
-import { Geist, Geist_Mono, Inter } from "next/font/google"
+import { Geist_Mono, Outfit } from "next/font/google"
+import type { Metadata } from "next"
 
 import "./globals.css"
-import { ThemeProvider } from "@/components/theme-provider"
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils"
 
-const inter = Inter({subsets:['latin'],variable:'--font-sans'})
+const outfit = Outfit({
+  subsets: ["latin"],
+  variable: "--font-sans",
+  weight: ["400", "500", "600", "700"],
+})
 
 const fontMono = Geist_Mono({
   subsets: ["latin"],
   variable: "--font-mono",
 })
+
+export const metadata: Metadata = {
+  title: "Abay Bus — Travel Smarter Across Ethiopia",
+  description:
+    "Book intercity bus tickets, track your ride in real time, and travel comfortably with Abay Bus.",
+  icons: {
+    icon: "/abay-bus-logo.png",
+    apple: "/abay-bus-logo.png",
+  },
+}
 
 export default function RootLayout({
   children,
@@ -19,12 +33,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      suppressHydrationWarning
-      className={cn("antialiased", fontMono.variable, "font-sans", inter.variable)}
+      className={cn("light antialiased", fontMono.variable, "font-sans", outfit.variable)}
     >
-      <body>
-        <ThemeProvider>{children}</ThemeProvider>
-      </body>
+      <body>{children}</body>
     </html>
   )
 }
